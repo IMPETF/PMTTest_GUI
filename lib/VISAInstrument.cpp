@@ -1,7 +1,14 @@
 #include "VISAInstrument.h"
 #include "VISASystemManager.h"
 
-VISAInstrument::VISAInstrument(const char *deviceName, const char *rsrcName)
+VISAInstrument::VISAInstrument()
+    :fStatus(VI_STATE_UNKNOWN),fViSession(VI_NULL),fDefaultRM(VI_NULL),
+      fErrorCode("NULL"),fAccessMode(VI_NULL),fOpenTimeout(VI_NULL)
+{
+}
+
+VISAInstrument::VISAInstrument(const char *deviceName, const char *rsrcName,ViAccessMode accessMode=VI_NULL,ViUInt32 openTimeout=VI_NULL)
+    :fAccessMode(accessMode),fOpenTimeout(openTimeout)
 {
     fDeviceName=deviceName;
     fRsrcName=rsrcName;
@@ -12,7 +19,7 @@ VISAInstrument::VISAInstrument(const char *deviceName, const char *rsrcName)
 
 VISAInstrument::~VISAInstrument()
 {
-    Close();
+    VISASystemManager::GetInstance()->DeRegister(fDeviceName);
 }
 
 bool VISAInstrument::Initialize()
@@ -32,7 +39,7 @@ bool VISAInstrument::Initialize()
         return false;
     }
     //viopen,default timeout 2s,default access mode
-    fStatus = viOpen(fDefaultRM,desc,VI_NULL,VI_NULL,&fViSession);
+    fStatus = viOpen(fDefaultRM,desc,fAccessMode,fOpenTimeout,&fViSession);
     if(fStatus < VI_SUCCESS){
         viStatusDesc(fViSession,fStatus,error_desc);
         fErrorCode=error_desc;
@@ -46,5 +53,14 @@ bool VISAInstrument::Initialize()
 
 void VISAInstrument::Close()
 {
-    VISASystemManager::GetInstance()->DeRegister(this);
+    viClose(fViSession);
 }
+
+bool VISAInstrument::Status()
+{
+    if(fStatus < VI_SUCCESS)
+        return false;
+    else
+        return true;
+}
+

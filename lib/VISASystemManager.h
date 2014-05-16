@@ -11,7 +11,7 @@ public:
     ~VISASystemManager();
     static VISASystemManager* GetInstance();
     static bool Register(VISAInstrument* instr);
-    static void DeRegister(VISAInstrument* instr);
+    static void DeRegister(std::string deviceName);
     static void Clean();
     static ViSession GetDefaultRM();
     static ViStatus ReInit();

@@ -7,8 +7,9 @@
 class VISAInstrument
 {
 public:
-    VISAInstrument(const char* deviceName,const char* rsrcName);
-    ~VISAInstrument();
+    VISAInstrument();
+    VISAInstrument(const char* deviceName,const char* rsrcName,ViAccessMode accessMode=VI_NULL,ViUInt32 openTimeout=VI_NULL);
+    virtual ~VISAInstrument();
 public:
     inline void SetName(const char* name)
     { fDeviceName = name; }
@@ -18,13 +19,15 @@ public:
     { fRsrcName=rcname; }
     inline std::string GetResourceString()
     { return fRsrcName; }
+    inline std::string ErrorCode()
+    { return fErrorCode; }
 
-    bool Initialize();
-    void Close();
     bool Status();
-    std::string ErrorCode();
 
 protected:
+    bool Initialize();
+    void Close();
+
     std::string fErrorCode;
 
 private:
@@ -33,6 +36,8 @@ private:
     ViSession   fDefaultRM;
     ViSession   fViSession;//ViSession
     ViStatus    fStatus;
+    ViAccessMode fAccessMode;
+    ViUInt32     fOpenTimeout;
 };
 
 #endif // VISAInstrument_H
