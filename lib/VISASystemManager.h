@@ -8,18 +8,23 @@
 class VISASystemManager
 {
 public:
+    ~VISASystemManager();
     static VISASystemManager* GetInstance();
-    static void Register(VISAInstrument* instr);
+    static bool Register(VISAInstrument* instr);
     static void DeRegister(VISAInstrument* instr);
     static void Clean();
+    static ViSession GetDefaultRM();
+    static ViStatus ReInit();
 
-    bool Status();
+    static bool Status();
 private:
     VISASystemManager();
 
 private:
+    static VISASystemManager* fInstance;
     ViSession fDefaultRM;
-    std::map<std::string,std::string> fActiveInstruments;
+    ViStatus  fStatus;//initialize=VI_STATE_UNKNOWN(-1)
+    std::map<std::string,VISAInstrument*> fActiveInstruments;
 };
 
 #endif // VISASYSTEMMANAGER_H
