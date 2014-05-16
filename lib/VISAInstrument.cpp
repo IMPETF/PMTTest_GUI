@@ -29,6 +29,7 @@ bool VISAInstrument::Initialize()
     //check visa system status
     if(!VISASystemManager::Status()){
         fErrorCode="Can't Initialize VISA system";
+        fStatus=VI_STATE_UNKNOWN;
         return false;
     }
     //find exactly the unique specified instr,no findlist
@@ -46,14 +47,19 @@ bool VISAInstrument::Initialize()
         return false;
     }
     //register this instrument
-    VISASystemManager::GetInstance()->Register(this);
+    if(!VISASystemManager::GetInstance()->Register(this)){
+        fStatus=VI_STATE_UNKNOWN;
+        fErrorCode="Error! DeviceName Duplication.Please Choose Another DeviceName";
+        return false;
+    }
 
     return true;
 }
 
 void VISAInstrument::Close()
 {
-    viClose(fViSession);
+    if(fStatus >= VI_SUCCESS)
+        viClose(fViSession);
 }
 
 bool VISAInstrument::Status()

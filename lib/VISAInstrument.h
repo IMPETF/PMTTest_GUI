@@ -23,11 +23,10 @@ public:
     { return fErrorCode; }
 
     bool Status();
-
-protected:
     bool Initialize();
     void Close();
 
+protected:
     std::string fErrorCode;
 
 private:
