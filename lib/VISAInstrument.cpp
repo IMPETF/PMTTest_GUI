@@ -62,6 +62,7 @@ bool VISAInstrument::Initialize()
         fErrorCode="Error! DeviceName Duplication.Please Choose Another DeviceName";
         return false;
     }
+    fRsrcDesc=desc;
 
     return true;
 }

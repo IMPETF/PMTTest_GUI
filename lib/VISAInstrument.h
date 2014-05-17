@@ -22,7 +22,8 @@ public:
     inline void SetDefaultRM();
     inline std::string ErrorCode()
     { return fErrorCode; }
-
+    inline std::string GetRsrcDesc()
+    { return fRsrcDesc; }
     bool Status();
     bool Initialize();
     void Close();
@@ -33,6 +34,7 @@ protected:
 private:
     std::string fDeviceName;//Unique Name idetify the intrument
     std::string fRsrcName;//Rsrc string
+    std::string fRsrcDesc;
     ViSession   fDefaultRM;
     ViSession   fViSession;//ViSession
     ViStatus    fStatus;
