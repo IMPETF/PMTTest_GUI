@@ -49,6 +49,7 @@ void VISASystemManager::Clean()
     VISASystemManager* self=GetInstance();
     for(it=self->begin();it!=self->end();++it){
         it->second->Close();
+        //delete it->second;
     }
     self->clear();
 }

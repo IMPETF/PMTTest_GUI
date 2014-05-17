@@ -5,6 +5,7 @@
 class PMTVDaqManager
 {
 public:
+    PMTVDaqManager();
     PMTVDaqManager(const char* name);
     virtual ~PMTVDaqManager(){}
 
