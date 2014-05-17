@@ -22,9 +22,9 @@ private:
 
 private:
     static VISASystemManager* fInstance;
-    ViSession fDefaultRM;
-    ViStatus  fStatus;//initialize=VI_STATE_UNKNOWN(-1)
-    std::map<std::string,VISAInstrument*> fActiveInstruments;
+    static ViSession fDefaultRM;
+    static ViStatus  fStatus;//initialize=VI_STATE_UNKNOWN(-1)
+    static std::map<std::string,VISAInstrument*> fActiveInstruments;
 };
 
 #endif // VISASYSTEMMANAGER_H

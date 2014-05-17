@@ -7,7 +7,7 @@ VISAInstrument::VISAInstrument()
 {
 }
 
-VISAInstrument::VISAInstrument(const char *deviceName, const char *rsrcName,ViAccessMode accessMode=VI_NULL,ViUInt32 openTimeout=VI_NULL)
+VISAInstrument::VISAInstrument(const char *deviceName, const char *rsrcName,ViAccessMode accessMode,ViUInt32 openTimeout)
     :fAccessMode(accessMode),fOpenTimeout(openTimeout)
 {
     fDeviceName=deviceName;
@@ -22,6 +22,11 @@ VISAInstrument::~VISAInstrument()
     VISASystemManager::GetInstance()->DeRegister(fDeviceName);
 }
 
+inline void VISAInstrument::SetDefaultRM()
+{
+    fDefaultRM=VISASystemManager::GetInstance()->GetDefaultRM();
+}
+
 bool VISAInstrument::Initialize()
 {
     char desc[256];
@@ -33,7 +38,12 @@ bool VISAInstrument::Initialize()
         return false;
     }
     //find exactly the unique specified instr,no findlist
-    fStatus = viFindRsrc(fDefaultRM,fRsrcName.data(),VI_NULL,VI_NULL,desc);
+    int length=fRsrcName.size()+1;
+    char *rsrcname=new char[length];
+    fRsrcName.copy(rsrcname,length-1);
+    rsrcname[length-1]='\0';
+    fStatus = viFindRsrc(fDefaultRM,rsrcname,VI_NULL,VI_NULL,desc);
+    delete[] rsrcname;
     if(fStatus < VI_SUCCESS){
         viStatusDesc(fViSession,fStatus,error_desc);
         fErrorCode=error_desc;

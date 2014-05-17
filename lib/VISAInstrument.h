@@ -19,6 +19,7 @@ public:
     { fRsrcName=rcname; }
     inline std::string GetResourceString()
     { return fRsrcName; }
+    inline void SetDefaultRM();
     inline std::string ErrorCode()
     { return fErrorCode; }
 
