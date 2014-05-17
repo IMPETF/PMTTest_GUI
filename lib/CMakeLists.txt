@@ -10,3 +10,7 @@ set(SRC VISASystemManager.cpp VISAInstrument.cpp PMTVDaqManager.cpp)
 add_library(libPMT ${SRC})
 target_link_libraries(libPMT ${VISA_LIBRARIES})
 
+add_executable(test main.cpp)
+#set_target_properties(test PROPERTIES LINKER_LANGUAGE CXX)
+target_link_libraries(test libPMT)
+

@@ -3,9 +3,9 @@
 #include <string>
 #include <map>
 #include "visa.h"
-#include "VISAInstrument.h"
+class VISAInstrument;
 
-class VISASystemManager
+class VISASystemManager : public std::map<std::string,VISAInstrument*>
 {
 public:
     ~VISASystemManager();
@@ -24,7 +24,6 @@ private:
     static VISASystemManager* fInstance;
     static ViSession fDefaultRM;
     static ViStatus  fStatus;//initialize=VI_STATE_UNKNOWN(-1)
-    static std::map<std::string,VISAInstrument*> fActiveInstruments;
 };
 
 #endif // VISASYSTEMMANAGER_H

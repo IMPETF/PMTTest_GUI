@@ -1,9 +1,9 @@
 #include "VISASystemManager.h"
+#include "VISAInstrument.h"
 
 VISASystemManager* VISASystemManager::fInstance = 0;
 ViSession VISASystemManager::fDefaultRM=0;
 ViStatus VISASystemManager::fStatus=VI_STATE_UNKNOWN;
-std::map<std::string,VISAInstrument*> VISASystemManager::fActiveInstruments;
 
 VISASystemManager::VISASystemManager()
 {
@@ -27,27 +27,30 @@ bool VISASystemManager::Register(VISAInstrument *instr)
 {
     std::string deviceName=instr->GetName();
     std::pair<std::map<std::string,VISAInstrument*>::iterator,bool> ret;
-    ret=fActiveInstruments.insert(std::pair<std::string,VISAInstrument*>(deviceName,instr));
+    ret=GetInstance()->insert(std::pair<std::string,VISAInstrument*>(deviceName,instr));
     return ret.second;
 }
 
 void VISASystemManager::DeRegister(std::string deviceName)
 {
-    std::map<std::string,VISAInstrument*>::iterator it;
-    it=fActiveInstruments.find(deviceName);
-    if(it!=fActiveInstruments.end()){
-        fActiveInstruments.erase(it);
+    iterator it;
+    VISASystemManager* self=GetInstance();
+    //auto it=fActiveInstruments.find(deviceName);
+    it=self->find(deviceName);
+    if(it!=self->end()){
         it->second->Close();
+        self->erase(it);
     }
 }
 
 void VISASystemManager::Clean()
 {
-    std::map<std::string,VISAInstrument*>::iterator it;
-    for(it=fActiveInstruments.begin();it!=fActiveInstruments.end();++it){
+    iterator it;
+    VISASystemManager* self=GetInstance();
+    for(it=self->begin();it!=self->end();++it){
         it->second->Close();
     }
-    fActiveInstruments.clear();
+    self->clear();
 }
 
 ViSession VISASystemManager::GetDefaultRM()
