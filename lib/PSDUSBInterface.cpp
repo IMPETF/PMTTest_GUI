@@ -129,3 +129,62 @@ bool PSDUSBInterface::SelectBackupCOMChn(int FEEID)
     Command[1]=0x90+FEEID;
     return SendCommand(Command);
 }
+
+bool PSDUSBInterface::SelectTrigMode(int Mode)
+{
+    unsigned char Command[2];
+    Command[0]=0x00;
+    Command[1]=0x50+(0x01<<(Mode));
+    return SendCommand(Command);
+}
+
+bool PSDUSBInterface::OpenTrig()
+{
+    unsigned char Command[2];
+    Command[0]=0x00;
+    Command[1]=0x51;
+    return SendCommand(Command);
+}
+
+bool PSDUSBInterface::CloseTrig()
+{
+    unsigned char Command[2];
+    Command[0]=0x00;
+    Command[1]=0x52;
+    return SendCommand(Command);
+}
+
+bool PSDUSBInterface::CalibInternal(int Time)
+{
+    unsigned char Command[2];
+    int LowBits, HighBits;
+    LowBits=Time&0xff;
+    HighBits=(Time>>8)&0x0f;
+    Command[0]=HighBits+0x10;
+    Command[1]=LowBits;
+    return SendCommand(Command);
+}
+
+bool PSDUSBInterface::StartCalib()
+{
+    unsigned char Command[2];
+    Command[0]=0x00;
+    Command[1]=0x03;
+    return SendCommand(Command);
+}
+
+bool PSDUSBInterface::ClearFIFO()
+{
+    unsigned char Command[2];
+    Command[0]=0x00;
+    Command[1]=0xa0;
+    return SendCommand(Command);
+}
+
+bool PSDUSBInterface::SetFIFO()
+{
+    unsigned char Command[2];
+    Command[0]=0x00;
+    Command[1]=0xb0;
+    return SendCommand(Command);
+}
