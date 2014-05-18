@@ -30,14 +30,14 @@ public:
 
 protected:
     std::string fErrorCode;
+    ViSession   fViSession;//ViSession
+    ViStatus    fStatus;
 
 private:
     std::string fDeviceName;//Unique Name idetify the intrument
     std::string fRsrcName;//Rsrc string
     std::string fRsrcDesc;
     ViSession   fDefaultRM;
-    ViSession   fViSession;//ViSession
-    ViStatus    fStatus;
     ViAccessMode fAccessMode;
     ViUInt32     fOpenTimeout;
 };
