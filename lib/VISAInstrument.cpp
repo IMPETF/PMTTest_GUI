@@ -1,6 +1,6 @@
 #include "VISAInstrument.h"
 #include "VISASystemManager.h"
-
+//#include "stdio.h"
 VISAInstrument::VISAInstrument()
     :fStatus(VI_STATE_UNKNOWN),fViSession(VI_NULL),fDefaultRM(VI_NULL),
       fErrorCode("NULL"),fAccessMode(VI_NULL),fOpenTimeout(VI_NULL)
@@ -19,6 +19,7 @@ VISAInstrument::VISAInstrument(const char *deviceName, const char *rsrcName,ViAc
 
 VISAInstrument::~VISAInstrument()
 {
+    //printf("destruct VISAInstrument %s\n",fDeviceName.c_str());
     VISASystemManager::GetInstance()->DeRegister(fDeviceName);
 }
 
@@ -60,6 +61,7 @@ bool VISAInstrument::Initialize()
     if(!VISASystemManager::GetInstance()->Register(this)){
         fStatus=VI_STATE_UNKNOWN;
         fErrorCode="Error! DeviceName Duplication.Please Choose Another DeviceName";
+        Close();
         return false;
     }
     fRsrcDesc=desc;
@@ -69,7 +71,7 @@ bool VISAInstrument::Initialize()
 
 void VISAInstrument::Close()
 {
-    if(fStatus >= VI_SUCCESS)
+    //if(fStatus >= VI_SUCCESS)
         viClose(fViSession);
 }
 

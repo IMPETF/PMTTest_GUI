@@ -1,5 +1,6 @@
 #include "VISASystemManager.h"
 #include "VISAInstrument.h"
+//#include "stdio.h"
 
 VISASystemManager* VISASystemManager::fInstance = 0;
 ViSession VISASystemManager::fDefaultRM=0;
@@ -12,6 +13,10 @@ VISASystemManager::VISASystemManager()
 
 VISASystemManager::~VISASystemManager()
 {
+    //printf("destruct VISASystemManager\n");
+    //static object will be destructed after main fucntion return.
+    //while undeleted heap object will be deleted rudely by OS without
+    //invoking destructor.
     Clean();
 }
 VISASystemManager* VISASystemManager::GetInstance()
@@ -35,7 +40,6 @@ void VISASystemManager::DeRegister(std::string deviceName)
 {
     iterator it;
     VISASystemManager* self=GetInstance();
-    //auto it=fActiveInstruments.find(deviceName);
     it=self->find(deviceName);
     if(it!=self->end()){
         it->second->Close();
@@ -48,8 +52,10 @@ void VISASystemManager::Clean()
     iterator it;
     VISASystemManager* self=GetInstance();
     for(it=self->begin();it!=self->end();++it){
-        it->second->Close();
-        //delete it->second;
+        it->second->Close();//just close the resource
+                                        // delete will invoke Deregister(),which
+                                       // in turn will make erase item,ultimately
+                                       //make ++it invalid,a run time error
     }
     self->clear();
 }
