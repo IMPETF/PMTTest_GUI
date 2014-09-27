@@ -58,6 +58,8 @@ void VISASystemManager::Clean()
                                        //make ++it invalid,a run time error
     }
     self->clear();
+    //close visa resource manager
+    viClose(fDefaultRM);
 }
 
 ViSession VISASystemManager::GetDefaultRM()
