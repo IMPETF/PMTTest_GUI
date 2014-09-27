@@ -10,6 +10,12 @@ public:
     VISAInstrument();
     VISAInstrument(const char* deviceName,const char* rsrcName,ViAccessMode accessMode=VI_NULL,ViUInt32 openTimeout=VI_NULL);
     virtual ~VISAInstrument();
+
+private:
+    //copy control, declared but not implemented,users should not copy an VISAInstrument
+    VISAInstrument(const VISAInstrument& rhs);
+    VISAInstrument& operator=(const VISAInstrument& rhs);
+
 public:
     inline void SetName(const char* name)
     { fDeviceName = name; }

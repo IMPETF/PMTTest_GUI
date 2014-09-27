@@ -2,9 +2,11 @@
 #include "VISASystemManager.h"
 //#include "stdio.h"
 VISAInstrument::VISAInstrument()
-    :fStatus(VI_STATE_UNKNOWN),fViSession(VI_NULL),fDefaultRM(VI_NULL),
+    :fStatus(VI_STATE_UNKNOWN),fViSession(VI_NULL),
       fErrorCode("NULL"),fAccessMode(VI_NULL),fOpenTimeout(VI_NULL)
 {
+    fDefaultRM=VISASystemManager::GetInstance()->GetDefaultRM();
+
 }
 
 VISAInstrument::VISAInstrument(const char *deviceName, const char *rsrcName,ViAccessMode accessMode,ViUInt32 openTimeout)
