@@ -159,7 +159,7 @@ bool AFG3252::IsNormalPolarity(int channel)
     fErrorCode=error_desc;
 
     string response=retvalue;
-    if(response=="norm")
+    if(response=="NORM")
         return true;
     else
         return false;
@@ -174,7 +174,7 @@ bool AFG3252::IsInversePolarity(int channel)
     fErrorCode=error_desc;
 
     string response=retvalue;
-    if(response=="inv")
+    if(response=="INV")
         return true;
     else
         return false;
