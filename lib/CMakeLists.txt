@@ -8,7 +8,7 @@ include_directories(${VISA_INCLUDE_DIR})
 set(VISA_LIBRARIES "C:/Program Files/IVI Foundation/VISA/WinNT/lib/msc/visa32.lib" CACHE FILEPATH
 "choose the file visa32.lib")
 
-set(SRC VISASystemManager.cpp VISAInstrument.cpp PMTVDaqManager.cpp)
+set(SRC VISASystemManager.cpp VISAInstrument.cpp PMTVDaqManager.cpp afg3252.cpp)
 add_library(libPMT ${SRC})
 target_link_libraries(libPMT ${VISA_LIBRARIES})
 
