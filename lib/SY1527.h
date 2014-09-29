@@ -1,12 +1,27 @@
 #ifndef SY1527_H
 #define SY1527_H
 #include <string>
+#include <vector>
+#include <map>
 #include "caenhvwrapper/include/CAENHVWrapper.h"
+
+struct HVChannel
+{
+    int slot;
+    ushort ch_id;
+    char ch_name[MAX_CH_NAME];
+    float V0Set;
+    float I0Set;
+    float VMon;
+    float IMon;
+};
+typedef std::vector<HVChannel> HVChannels;
+typedef std::map<int,HVChannels> HVGroup;
 
 class SYX527_Module
 {
 public:
-    SYX527_Module(int slot,ushort chnum,ushort* chlist);
+    SYX527_Module(int slot,HVChannels& group);
     ~SYX527_Module();
 
 public:
