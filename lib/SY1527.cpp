@@ -1,3 +1,4 @@
+#include <string.h>
 #include "SY1527.h"
 
 using namespace std;
@@ -203,8 +204,35 @@ bool SYX527_Module::update(HVChannels &channels)
     if(!fCrate->connect())
         return false;
     else{
+        if(!fCrate->GetState(fSlot,fChNum,fPChList,fPState))
+            return false;
+        if(!fCrate->GetV0(fSlot,fChNum,fPChList,fPV0Set))
+            return false;
+        if(!fCrate->GetI0(fSlot,fChNum,fPChList,fPI0Set))
+            return false;
+        if(!fCrate->GetVMon(fSlot,fChNum,fPChList,fPVMon))
+            return false;
+        if(!fCrate->GetIMon(fSlot,fChNum,fPChList,fPIMon))
+            return false;
+        if(!fCrate->getChName(fSlot,fChNum,fPChList,fPChName))
+            return false;
+
+        if(channels.size() != fChNum){
+            channels.resize(fChNum);
+        }
+        for(int i=0;i<fChNum;i++){
+            channels[i].slot=fSlot;
+            channels[i].ch_id=fChList[i];
+            strncpy(channels[i].ch_name,fPChName+i,MAX_CH_NAME);
+            channels[i].V0Set=fV0Set[i];
+            channels[i].I0Set=fI0Set[i];
+            channels[i].VMon=fVMon[i];
+            channels[i].IMon=fIMon[i];
+            channles[i].state=fState[i];
+        }
 
     }
+
     return fCrate->disConnect();
 }
 
