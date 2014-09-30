@@ -7,9 +7,11 @@
 
 struct HVChannel
 {
+    //in
     ushort slot;
     ushort ch_id;
     char ch_name[MAX_CH_NAME];
+    //out
     float V0Set;
     float I0Set;
     float VMon;
@@ -28,20 +30,35 @@ public:
 public:
     inline void setVSet(float vset) {fVset=vset;}
     inline void setISet(float iset) {fISet=iset;}
-    inline void setfRUp(float rup) {fRUp=rup;}
-    inline void setfRDWn(float rdown) {fRDWn=rdown;}
+    inline void setRampUp(float rup) {fRUp=rup;}
+    inline void setRampDown(float rdown) {fRDWn=rdown;}
     inline ushort getSlot() const {return slot;}
 
+    bool updateChName();
+    bool updateVSet();
+    bool updateISet();
+    bool updateRampUp();
+    bool updateRampDown();
+
+    bool getState();
+    bool getV0Set();
+    bool getI0Set();
+    bool getVMon();
+    bool getIMon();
+    bool getChName();
+
+    bool update(HVChannels& channels);
+    bool PowerOn();
+    bool PowerOff();
 private:
-    SY1527* crate;
-    ushort slot;
+    SY1527* fCrate;
+    ushort fSlot;
     ushort fChNum;
     //ushort *fChList;
     std::vector<ushort> fChList;
     ushort* fPChList;
     //std::string *fChSetName;
     std::vector<string> fChSetName;
-    std::string *fPChSetName;
 
     //input
     float fVSet;
@@ -51,6 +68,9 @@ private:
     float fRDWn;
 
     //output
+    //ushort* fState;
+    std::vector<ushort> fState;
+    ushort* fPState;
     //float *fV0Set;
     std::vector<float> fV0Set;
     float* fPV0Set;
@@ -105,8 +125,14 @@ public:
     bool TurnOff(ushort slot,ushort chnum,const ushort *chlist);
     bool SetRampUp(ushort slot,ushort chnum,const ushort *chlist,float RUp);
     bool SetRampDown(ushort slot,ushort chnum,const ushort *chlist,float RDwn);
-    bool SetV0Set(ushort slot,ushort chnum,const ushort *chlist,float V);
-    bool SetI0Set(ushort slot,ushort chnum,const ushort *chlist,float I);
+    bool SetV0(ushort slot,ushort chnum,const ushort *chlist,float V);
+    bool SetI0(ushort slot,ushort chnum,const ushort *chlist,float I);
+
+    bool GetState(ushort slot,ushort chnum,const ushort *chlist,float* parvallist);
+    bool GetV0(ushort slot,ushort chnum,const ushort *chlist,float* parvallist);
+    bool GetI0(ushort slot,ushort chnum,const ushort *chlist,float* parvallist);
+    bool GetVMon(ushort slot,ushort chnum,const ushort *chlist,float* parvallist);
+    bool GetIMon(ushort slot,ushort chnum,const ushort *chlist,float* parvallist);
 
 private:
     //config
