@@ -68,22 +68,42 @@ bool SYX527_Module::updateChName()
 
 bool SYX527_Module::updateVSet()
 {
+    //update
     if(!fCrate->connect())
         return false;
     else{
         if(!fCrate->SetV0(fSlot,fChNum,fPChList,fVSet))
             return false;
     }
+    //confirm
+    if(!fCrate->GetV0(fSlot,fChNum,fPChList,fPV0Set))
+        return false;
+    else{
+        for(int i=0;i<fChNum;i++){
+            if(fV0Set[i] != fVSet)
+                return false;
+        }
+    }
     return fCrate->disConnect();
 }
 
 bool SYX527_Module::updateISet()
 {
+    //update
     if(!fCrate->connect())
         return false;
     else{
         if(!fCrate->SetI0(fSlot,fChNum,fPChList,fISet))
             return false;
+    }
+    //confirm
+    if(!fCrate->GetI0(fSlot,fChNum,fPChList,fPI0Set))
+        return false;
+    else{
+        for(int i=0;i<fChNum;i++){
+            if(fI0Set[i] != fISet)
+                return false;
+        }
     }
     return fCrate->disConnect();
 }
@@ -91,12 +111,14 @@ bool SYX527_Module::updateISet()
 
 bool SYX527_Module::updateRampUp()
 {
+    //update
     if(!fCrate->connect())
         return false;
     else{
         if(!fCrate->SetRampUp(fSlot,fChNum,fPChList,fRUp))
             return false;
     }
+
     return fCrate->disConnect();
 }
 
@@ -108,6 +130,7 @@ bool SYX527_Module::updateRampDown()
         if(!fCrate->SetRampDown(fSlot,fChNum,fPChList,fRDWn))
             return false;
     }
+
     return fCrate->disConnect();
 }
 
@@ -441,4 +464,14 @@ bool SY1527::GetVMon(unsigned short slot, unsigned short chnum, const unsigned s
 bool SY1527::GetIMon(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float *parvallist)
 {
     return getChParam(slot,"IMon",chnum,chlist,parvallist);
+}
+
+bool SY1527::GetRampUp(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float *parvallist)
+{
+    return getChParam(slot,"RUp",chnum,chlist,parvallist);
+}
+
+bool SY1527::GetRampDown(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float *parvallist)
+{
+    return getChParam(slot,"RDWn",chnum,chlist,parvallist);
 }

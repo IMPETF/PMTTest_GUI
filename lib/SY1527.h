@@ -133,6 +133,8 @@ public:
     bool GetI0(ushort slot,ushort chnum,const ushort *chlist,float* parvallist);
     bool GetVMon(ushort slot,ushort chnum,const ushort *chlist,float* parvallist);
     bool GetIMon(ushort slot,ushort chnum,const ushort *chlist,float* parvallist);
+    bool GetRampUp(ushort slot,ushort chnum,const ushort *chlist,float* parvallist);
+    bool GetRampDown(ushort slot,ushort chnum,const ushort *chlist,float* parvallist);
 
 private:
     //config
