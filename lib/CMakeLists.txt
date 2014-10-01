@@ -4,16 +4,16 @@ project(libPMT CXX)
 
 #set(VISA_DIR "D:/Program Files" CACHE PATH "choose the NI-VISA install directory")
 set(VISA_INCLUDE_DIR "C:/Program Files/IVI Foundation/VISA/WinNT/include" CACHE PATH "choose the dir where visa.h is included")
-include_directories(${VISA_INCLUDE_DIR})
 set(VISA_LIBRARIES "C:/Program Files/IVI Foundation/VISA/WinNT/lib/msc/visa32.lib" CACHE FILEPATH
 "choose the file visa32.lib")
+include_directories(${VISA_INCLUDE_DIR})
 
 set(CAENHV_DIR ${PROJECT_SOURCE_DIR}/caenhvwrapper)
 set(CAENHV_INCLUDE_DIR ${CAENHV_DIR}/include)
 set(CAENHV_LIBRARIES ${CAENHV_DIR}/lib/CAENHVWrapper.lib)
 include_directories(${CAENHV_INCLUDE_DIR})
 
-set(SRC VISASystemManager.cpp VISAInstrument.cpp PMTVDaqManager.cpp afg3252.cpp SY1527.cpp)
+set(SRC VISASystemManager.cpp VISAInstrument.cpp PMTVDaqManager.cpp AFG3252.cpp SYX527.cpp)
 add_library(libPMT ${SRC})
 target_link_libraries(libPMT ${VISA_LIBRARIES} ${CAENHV_LIBRARIES})
 

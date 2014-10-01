@@ -1,4 +1,4 @@
-#include "afg3252.h"
+#include "AFG3252.h"
 #include <stdio.h>
 #include <string.h>
 

@@ -1,5 +1,6 @@
 #include <string.h>
-#include "SY1527.h"
+#include "SYX527.h"
+#include <windows.h>
 
 using namespace std;
 /////////SYX527_Module/////////////////////////////
@@ -52,13 +53,14 @@ bool SYX527_Module::updateChName()
                 return false;
         }
     }
+    Sleep(1000);
     //confirm
     if(!fCrate->getChName(fSlot,fChNum,fPChList,fPChName))
         return false;
     else{
         string tempstr;
         for(int i=0;i<fChNum;i++){
-            tempstr=fPChName[i];
+            tempstr=reinterpret_cast<char*>(fPChName[i]);
             if(tempstr != fChSetName[i])
                 return false;
         }
@@ -75,6 +77,7 @@ bool SYX527_Module::updateVSet()
         if(!fCrate->SetV0(fSlot,fChNum,fPChList,fVSet))
             return false;
     }
+    /*
     //confirm
     if(!fCrate->GetV0(fSlot,fChNum,fPChList,fPV0Set))
         return false;
@@ -84,6 +87,7 @@ bool SYX527_Module::updateVSet()
                 return false;
         }
     }
+    */
     return fCrate->disConnect();
 }
 
@@ -96,6 +100,7 @@ bool SYX527_Module::updateISet()
         if(!fCrate->SetI0(fSlot,fChNum,fPChList,fISet))
             return false;
     }
+    /*
     //confirm
     if(!fCrate->GetI0(fSlot,fChNum,fPChList,fPI0Set))
         return false;
@@ -105,6 +110,7 @@ bool SYX527_Module::updateISet()
                 return false;
         }
     }
+    */
     return fCrate->disConnect();
 }
 
@@ -251,7 +257,7 @@ bool SYX527_Module::update(HVChannels &channels)
             channels[i].I0Set=fI0Set[i];
             channels[i].VMon=fVMon[i];
             channels[i].IMon=fIMon[i];
-            channels[i].state=fState[i];
+            channels[i].state=static_cast<bool>(fState[i]);
         }
 
     }
@@ -413,13 +419,13 @@ bool SYX527::getChParam(unsigned short slot, const char *param, unsigned short c
 
 bool SYX527::TurnOn(unsigned short slot, unsigned short chnum, const unsigned short *chlist)
 {
-    unsigned long Pw=1;
+    ulong Pw=1;
     return setChParam(slot,"Pw",chnum,chlist,&Pw);
 }
 
 bool SYX527::TurnOff(unsigned short slot, unsigned short chnum, const unsigned short *chlist)
 {
-    unsigned long Pw=0;
+    ulong Pw=0;
     return setChParam(slot,"Pw",chnum,chlist,&Pw);
 }
 
@@ -443,7 +449,7 @@ bool SYX527::SetI0(unsigned short slot, unsigned short chnum, const unsigned sho
     return setChParam(slot,"I0Set",chnum,chlist,&I);
 }
 
-bool SYX527::GetState(unsigned short slot, unsigned short chnum, const unsigned short *chlist, ushort *parvallist)
+bool SYX527::GetState(unsigned short slot, unsigned short chnum, const unsigned short *chlist, ulong *parvallist)
 {
     return getChParam(slot,"Pw",chnum,chlist,parvallist);
 }

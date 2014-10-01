@@ -63,7 +63,7 @@ public:
     bool SetV0(ushort slot,ushort chnum,const ushort *chlist,float V);
     bool SetI0(ushort slot,ushort chnum,const ushort *chlist,float I);
 
-    bool GetState(ushort slot,ushort chnum,const ushort *chlist,ushort* parvallist);
+    bool GetState(ushort slot,ushort chnum,const ushort *chlist,ulong* parvallist);
     bool GetV0(ushort slot,ushort chnum,const ushort *chlist,float* parvallist);
     bool GetI0(ushort slot,ushort chnum,const ushort *chlist,float* parvallist);
     bool GetVMon(ushort slot,ushort chnum,const ushort *chlist,float* parvallist);
@@ -132,8 +132,8 @@ private:
 
     //output
     //ushort* fState;
-    std::vector<ushort> fState;
-    ushort* fPState;
+    std::vector<ulong> fState;
+    ulong* fPState;
     //float *fV0Set;
     std::vector<float> fV0Set;
     float* fPV0Set;
