@@ -20,7 +20,7 @@ struct HVChannel
     bool state;
 };
 typedef std::vector<HVChannel> HVChannels;
-typedef std::map<int,HVChannels> HVGroup;
+typedef std::map<ushort,HVChannels> HVGroup;
 
 class SYX527
 {
@@ -87,7 +87,7 @@ private:
 class SYX527_Module
 {
 public:
-    SYX527_Module(SYX527 *controller,int slot,HVChannels& channels);
+    SYX527_Module(SYX527 *controller,ushort slot,HVChannels& channels);
     ~SYX527_Module();
 
 public:

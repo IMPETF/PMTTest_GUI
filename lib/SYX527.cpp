@@ -4,7 +4,7 @@
 
 using namespace std;
 /////////SYX527_Module/////////////////////////////
-SYX527_Module::SYX527_Module(SYX527 *controller, int slot_num, HVChannels &channels):
+SYX527_Module::SYX527_Module(SYX527 *controller, ushort slot_num, HVChannels &channels):
     fCrate(controller),fSlot(slot_num),fChNum(channels.size()),
     fVSet(0),fISet(25.0),fRUp(30.0),fRDWn(30.0)
 {
