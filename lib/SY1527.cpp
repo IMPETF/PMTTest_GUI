@@ -3,7 +3,7 @@
 
 using namespace std;
 /////////SYX527_Module/////////////////////////////
-SYX527_Module::SYX527_Module(SY1527 *controller, int slot_num, HVChannels &channels):
+SYX527_Module::SYX527_Module(SYX527 *controller, int slot_num, HVChannels &channels):
     fCrate(controller),fSlot(slot_num),fChNum(channels.size()),
     fVSet(0),fISet(25.0),fRUp(30.0),fRDWn(30.0)
 {
@@ -38,7 +38,7 @@ SYX527_Module::SYX527_Module(SY1527 *controller, int slot_num, HVChannels &chann
 
 SYX527_Module::~SYX527_Module()
 {
-    delete fPChName;
+    delete []fPChName;
 }
 
 bool SYX527_Module::updateChName()
@@ -246,12 +246,12 @@ bool SYX527_Module::update(HVChannels &channels)
         for(int i=0;i<fChNum;i++){
             channels[i].slot=fSlot;
             channels[i].ch_id=fChList[i];
-            strncpy(channels[i].ch_name,fPChName+i,MAX_CH_NAME);
+            strncpy(channels[i].ch_name,reinterpret_cast<char*>(fPChName+i),MAX_CH_NAME);
             channels[i].V0Set=fV0Set[i];
             channels[i].I0Set=fI0Set[i];
             channels[i].VMon=fVMon[i];
             channels[i].IMon=fIMon[i];
-            channles[i].state=fState[i];
+            channels[i].state=fState[i];
         }
 
     }
@@ -259,25 +259,25 @@ bool SYX527_Module::update(HVChannels &channels)
     return fCrate->disConnect();
 }
 
-//////////SY1527///////////////////////////////////
-SY1527::SY1527():
+//////////SYX527///////////////////////////////////
+SYX527::SYX527():
     fStatus(CAENHV_OK)
 {
 
 }
 
-SY1527::SY1527(const char *IP, const char *usrName, const char *pssWord):
-    fIPAddr(IP),fUserName(usrName),fPassWord(pssWord),handle(0),fSatus(CAENHV_OK)
+SYX527::SYX527(const char *IP, const char *usrName, const char *pssWord):
+    fIPAddr(IP),fUserName(usrName),fPassWord(pssWord),fHandle(0),fStatus(CAENHV_OK)
 {
 
 }
 
-SY1527::~SY1527()
+SYX527::~SYX527()
 {
 
 }
 
-bool SY1527::status()
+bool SYX527::status()
 {
     if(fStatus == CAENHV_OK)
         return true;
@@ -285,35 +285,37 @@ bool SY1527::status()
         return false;
 }
 
-string SY1527::getErrorDesc()
+string SYX527::getErrorDesc()
 {
     return fErrorDesc;
 }
 
-bool SY1527::connect()
+bool SYX527::connect()
 {
-    fStatus=CAENHV_InitSystem(SY1527,LINKTYPE_TCPIP,fIPAddr.c_str(),
+    char temp[50];
+    strncpy(temp,fIPAddr.c_str(),50);
+    fStatus=CAENHV_InitSystem(SY1527,LINKTYPE_TCPIP,temp,
                               fUserName.c_str(),fPassWord.c_str(),&fHandle);
     if(fStatus != CAENHV_OK){
-        fErrorDesc="Can't connect SY1527";
+        fErrorDesc="Can't connect SYX527";
         return false;
     }
     else
         return true;
 }
 
-bool SY1527::disConnect()
+bool SYX527::disConnect()
 {
     fStatus=CAENHV_DeinitSystem(fHandle);
     if(fStatus != CAENHV_OK){
-        fErrorDesc="Can't disconnect SY1527";
+        fErrorDesc="Can't disconnect SYX527";
         return false;
     }
     else
         return true;
 }
 
-bool SY1527::setChName(unsigned short slot, unsigned short chnum, const unsigned short *chlist, const char *chname)
+bool SYX527::setChName(unsigned short slot, unsigned short chnum, const unsigned short *chlist, const char *chname)
 {
     fStatus=CAENHV_SetChName(fHandle,slot,chnum,chlist,chname);
     if(fStatus != CAENHV_OK){
@@ -324,7 +326,7 @@ bool SY1527::setChName(unsigned short slot, unsigned short chnum, const unsigned
         return true;
 }
 
-bool SY1527::setChName(unsigned short slot, unsigned short ch_id, const char *chname)
+bool SYX527::setChName(unsigned short slot, unsigned short ch_id, const char *chname)
 {
     fStatus=CAENHV_SetChName(fHandle,slot,1,&ch_id,chname);
     if(fStatus != CAENHV_OK){
@@ -335,7 +337,7 @@ bool SY1527::setChName(unsigned short slot, unsigned short ch_id, const char *ch
         return true;
 }
 
-bool SY1527::setChName(const HVChannels &channels)
+bool SYX527::setChName(HVChannels& channels)
 {
     HVChannels::iterator it;
     for(it=channels.begin();it!=channels.end();it++){
@@ -345,7 +347,7 @@ bool SY1527::setChName(const HVChannels &channels)
     return true;
 }
 
-bool SY1527::setChName(const HVChannel &channel)
+bool SYX527::setChName(const HVChannel &channel)
 {
     fStatus=CAENHV_SetChName(fHandle,channel.slot,1,&(channel.ch_id),channel.ch_name);
     if(fStatus != CAENHV_OK){
@@ -356,7 +358,7 @@ bool SY1527::setChName(const HVChannel &channel)
         return true;
 }
 
-bool SY1527::getChName(unsigned short slot, unsigned short ch_num, const unsigned short *chlist, char (*chname)[])
+bool SYX527::getChName(unsigned short slot, unsigned short ch_num, const unsigned short *chlist, char (*chname)[MAX_CH_NAME])
 {
     fStatus=CAENHV_GetChName(fHandle,slot,ch_num,chlist,chname);
     if(fStatus != CAENHV_OK){
@@ -367,17 +369,17 @@ bool SY1527::getChName(unsigned short slot, unsigned short ch_num, const unsigne
         return true;
 }
 
-bool SY1527::getChName(unsigned short slot, unsigned short ch_id, char *chname)
+bool SYX527::getChName(unsigned short slot, unsigned short ch_id, char *chname)
 {
-    return getChName(slot,1,&ch_id,chname);
+    return getChName(slot,1,&ch_id,reinterpret_cast<char(*)[MAX_CH_NAME]>(chname));
 }
 
-bool SY1527::getChName(HVChannel &channel)
+bool SYX527::getChName(HVChannel &channel)
 {
     return getChName(channel.slot,channel.ch_id,channel.ch_name);
 }
 
-bool SY1527::getChName(HVChannels &channels)
+bool SYX527::getChName(HVChannels &channels)
 {
     HVChannels::iterator it;
     for(it=channels.begin();it!=channels.end();it++){
@@ -387,7 +389,7 @@ bool SY1527::getChName(HVChannels &channels)
     return true;
 }
 
-bool SY1527::setChParam(unsigned short slot, const char *param, unsigned short chnum, const unsigned short *chlist, void *parvalue)
+bool SYX527::setChParam(unsigned short slot, const char *param, unsigned short chnum, const unsigned short *chlist, void *parvalue)
 {
     fStatus=CAENHV_SetChParam(fHandle,slot,param,chnum,chlist,parvalue);
     if(fStatus != CAENHV_OK){
@@ -398,7 +400,7 @@ bool SY1527::setChParam(unsigned short slot, const char *param, unsigned short c
         return true;
 }
 
-bool SY1527::getChParam(unsigned short slot, const char *param, unsigned short chnum, const unsigned short *chlist, void *parvallist)
+bool SYX527::getChParam(unsigned short slot, const char *param, unsigned short chnum, const unsigned short *chlist, void *parvallist)
 {
     fStatus=CAENHV_GetChParam(fHandle,slot,param,chnum,chlist,parvallist);
     if(fStatus != CAENHV_OK){
@@ -409,69 +411,69 @@ bool SY1527::getChParam(unsigned short slot, const char *param, unsigned short c
         return true;
 }
 
-bool SY1527::TurnOn(unsigned short slot, unsigned short chnum, const unsigned short *chlist)
+bool SYX527::TurnOn(unsigned short slot, unsigned short chnum, const unsigned short *chlist)
 {
     unsigned long Pw=1;
     return setChParam(slot,"Pw",chnum,chlist,&Pw);
 }
 
-bool SY1527::TurnOff(unsigned short slot, unsigned short chnum, const unsigned short *chlist)
+bool SYX527::TurnOff(unsigned short slot, unsigned short chnum, const unsigned short *chlist)
 {
     unsigned long Pw=0;
     return setChParam(slot,"Pw",chnum,chlist,&Pw);
 }
 
-bool SY1527::SetRampUp(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float RUp)
+bool SYX527::SetRampUp(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float RUp)
 {
     return setChParam(slot,"RUp",chnum,chlist,&RUp);
 }
 
-bool SY1527::SetRampDown(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float RDwn)
+bool SYX527::SetRampDown(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float RDwn)
 {
     return setChParam(slot,"RDWn",chnum,chlist,&RDwn);
 }
 
-bool SY1527::SetV0(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float V)
+bool SYX527::SetV0(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float V)
 {
     return setChParam(slot,"V0Set",chnum,chlist,&V);
 }
 
-bool SY1527::SetI0(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float I)
+bool SYX527::SetI0(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float I)
 {
     return setChParam(slot,"I0Set",chnum,chlist,&I);
 }
 
-bool SY1527::GetState(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float *parvallist)
+bool SYX527::GetState(unsigned short slot, unsigned short chnum, const unsigned short *chlist, ushort *parvallist)
 {
     return getChParam(slot,"Pw",chnum,chlist,parvallist);
 }
 
-bool SY1527::GetV0(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float *parvallist)
+bool SYX527::GetV0(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float *parvallist)
 {
     return getChParam(slot,"V0Set",chnum,chlist,parvallist);
 }
 
-bool SY1527::GetI0(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float *parvallist)
+bool SYX527::GetI0(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float *parvallist)
 {
     return getChParam(slot,"I0Set",chnum,chlist,parvallist);
 }
 
-bool SY1527::GetVMon(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float *parvallist)
+bool SYX527::GetVMon(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float *parvallist)
 {
     return getChParam(slot,"VMon",chnum,chlist,parvallist);
 }
 
-bool SY1527::GetIMon(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float *parvallist)
+bool SYX527::GetIMon(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float *parvallist)
 {
     return getChParam(slot,"IMon",chnum,chlist,parvallist);
 }
 
-bool SY1527::GetRampUp(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float *parvallist)
+bool SYX527::GetRampUp(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float *parvallist)
 {
     return getChParam(slot,"RUp",chnum,chlist,parvallist);
 }
 
-bool SY1527::GetRampDown(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float *parvallist)
+bool SYX527::GetRampDown(unsigned short slot, unsigned short chnum, const unsigned short *chlist, float *parvallist)
 {
     return getChParam(slot,"RDWn",chnum,chlist,parvallist);
 }

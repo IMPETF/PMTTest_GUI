@@ -8,9 +8,14 @@ include_directories(${VISA_INCLUDE_DIR})
 set(VISA_LIBRARIES "C:/Program Files/IVI Foundation/VISA/WinNT/lib/msc/visa32.lib" CACHE FILEPATH
 "choose the file visa32.lib")
 
-set(SRC VISASystemManager.cpp VISAInstrument.cpp PMTVDaqManager.cpp afg3252.cpp)
+set(CAENHV_DIR ${PROJECT_SOURCE_DIR}/caenhvwrapper)
+set(CAENHV_INCLUDE_DIR ${CAENHV_DIR}/include)
+set(CAENHV_LIBRARIES ${CAENHV_DIR}/lib/CAENHVWrapper.lib)
+include_directories(${CAENHV_INCLUDE_DIR})
+
+set(SRC VISASystemManager.cpp VISAInstrument.cpp PMTVDaqManager.cpp afg3252.cpp SY1527.cpp)
 add_library(libPMT ${SRC})
-target_link_libraries(libPMT ${VISA_LIBRARIES})
+target_link_libraries(libPMT ${VISA_LIBRARIES} ${CAENHV_LIBRARIES})
 
 add_executable(testdemo main.cpp)
 #set_target_properties(testdemo PROPERTIES LINKER_LANGUAGE CXX)
