@@ -13,11 +13,18 @@ set(CAENHV_INCLUDE_DIR ${CAENHV_DIR}/include)
 set(CAENHV_LIBRARIES ${CAENHV_DIR}/lib/CAENHVWrapper.lib)
 include_directories(${CAENHV_INCLUDE_DIR})
 
+set(PTHREAD_DIR ${PROJECT_SOURCE_DIR}/pthread_win32)
+set(PTHREAD_INCLUDE_DIR ${PTHREAD_DIR}/include)
+set(PTHREAD_LIBRARIES ${PTHREAD_DIR}/lib/pthreadVC2.lib)
+set(PTHREAD_DLLS ${PTHREAD_DIR}/dll/pthreadVC2.dll)
+include_directories(${PTHREAD_INCLUDE_DIR})
+
 set(SRC VISASystemManager.cpp VISAInstrument.cpp PMTVDaqManager.cpp AFG3252.cpp SYX527.cpp)
 add_library(libPMT ${SRC})
-target_link_libraries(libPMT ${VISA_LIBRARIES} ${CAENHV_LIBRARIES})
+target_link_libraries(libPMT ${VISA_LIBRARIES} ${CAENHV_LIBRARIES} ${PTHREAD_LIBRARIES})
 
 add_executable(testdemo main.cpp)
 #set_target_properties(testdemo PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(testdemo libPMT)
+file(COPY ${PTHREAD_DLLS} DESTINATION ${PROJECT_BINARY_DIR})
 
